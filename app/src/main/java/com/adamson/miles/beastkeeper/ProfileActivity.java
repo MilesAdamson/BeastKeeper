@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.media.Image;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 
 import java.io.IOException;
 
@@ -18,6 +20,8 @@ public class ProfileActivity extends AppCompatActivity {
 
     DatabaseHelper db;
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    ImageView photo4;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +29,7 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         db = new DatabaseHelper(getApplicationContext());
+        photo4 = findViewById(R.id.imageBeastFour);
     }
 
     @Override
@@ -67,17 +72,17 @@ public class ProfileActivity extends AppCompatActivity {
                         // it will be right side up
                         switch (orientation) {
                             case ExifInterface.ORIENTATION_ROTATE_90:
-                                bitmap = rotateImage(bitmap, 90);
+                                bitmap = shrinkRotateImage(bitmap, 90);
                                 break;
                             case ExifInterface.ORIENTATION_ROTATE_180:
-                                bitmap = rotateImage(bitmap, 180);
+                                bitmap = shrinkRotateImage(bitmap, 180);
                                 break;
                             case ExifInterface.ORIENTATION_ROTATE_270:
-                                bitmap = rotateImage(bitmap, 270);
+                                bitmap = shrinkRotateImage(bitmap, 270);
                                 break;
                             case ExifInterface.ORIENTATION_UNDEFINED:
                                 // My phone does not save exif data and likes to rotate 90 degrees
-                                bitmap = rotateImage(bitmap, 90);
+                                bitmap = shrinkRotateImage(bitmap, 90);
                                 break;
                             default:
                                 // Do not rotate
@@ -85,21 +90,33 @@ public class ProfileActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         System.err.println("An IOException was caught :" + e.getMessage());
                     }
+                    db.addPhoto(1, bitmap);
+                    photo4.setImageBitmap(bitmap);
                 } catch (IOException e) {
                     System.err.println("An IOException was caught :" + e.getMessage());
                 }
             }
-            // TODO: Save the bitmap into the database
         }
     }
 
-    // Rotates a bitmap by an integer number of degrees
-    private static Bitmap rotateImage(Bitmap img, int degree) {
+    // Rotates a bitmap by an integer number of degrees.
+    // Scales it down to 20% size.
+    private static Bitmap shrinkRotateImage(Bitmap img, int degree) {
         Matrix matrix = new Matrix();
+
+        int width = img.getWidth();
+        int height = img.getHeight();
+        float scaleWidth = ((float) width * 0.2f) / width;
+        float scaleHeight = ((float) height * 0.2f) / height;
+
+        matrix.postScale(scaleWidth, scaleHeight);
         matrix.postRotate(degree);
+
         Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
+
         // recycle img since it will no longer be used
         img.recycle();
+
         return rotatedImg;
     }
 

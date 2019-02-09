@@ -1,8 +1,12 @@
 package com.adamson.miles.beastkeeper;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
+
+import java.io.ByteArrayOutputStream;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -45,6 +49,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         database.execSQL("DROP TABLE IF EXISTS " + T1);
         database.execSQL("DROP TABLE IF EXISTS " + T2);
         onCreate(database);
+    }
+
+    // Adds a photo to the photos table, with the foreign key of the beasts profile
+    // and the bitmap of the image
+    public void addPhoto(int id, Bitmap bitmap){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new  ContentValues();
+
+        // convert from bitmap to byte array
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
+
+        // insert
+        cv.put(T2_beastID, id);
+        cv.put(T2_photo, stream.toByteArray());
+        db.insert(T2, null, cv );
     }
 
 
