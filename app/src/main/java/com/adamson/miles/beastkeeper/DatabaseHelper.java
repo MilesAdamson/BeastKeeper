@@ -122,4 +122,48 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+
+    // Returns a BeastProfile for a beast based on ID. Returns null if a beast doesn't exist
+    public BeastProfile selectProfile(int beastID){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String IdString = Integer.toString(beastID);
+
+        Cursor cursor = db.rawQuery("SELECT * FROM "+T1+
+                " WHERE "+T1_ID+" = "+IdString+";", null);
+
+        if (cursor.moveToFirst()){
+           BeastProfile beastProfile = new BeastProfile(
+                   cursor.getInt(0),
+                   cursor.getString(1),
+                   cursor.getString(2),
+                   cursor.getString(3)
+           );
+           cursor.close();
+           return beastProfile;
+        } else {
+            cursor.close();
+            return null;
+        }
+    }
+
+    // A class to contain a beasts profile, to return from select profile queries
+    public class BeastProfile{
+        private int beastID;
+        private String bio;
+        private String medical;
+        private String name;
+
+        public BeastProfile(int beastID, String name, String bio, String medical){
+            this.beastID = beastID;
+            this.bio = bio;
+            this.medical = medical;
+            this.name = name;
+        }
+
+        public String getName(){return name;}
+        public String getBio(){return bio;}
+        public String getMedical(){return medical;}
+        public int getID(){return beastID;}
+    }
+
 }

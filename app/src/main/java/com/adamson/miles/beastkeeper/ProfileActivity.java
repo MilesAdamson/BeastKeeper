@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -24,7 +25,11 @@ public class ProfileActivity extends AppCompatActivity {
 
     DatabaseHelper db;
     ImageView photo4;
+    DatabaseHelper.BeastProfile beastProfile;
 
+    TextView textViewBio;
+    TextView textViewMedical;
+    TextView textViewName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +42,20 @@ public class ProfileActivity extends AppCompatActivity {
         if(!db.beastIdExists(DatabaseHelper.DUSTY_ID)){
             db.insertDusty(getApplicationContext());
         }
+
+        // Select Dusty's Profile
+        beastProfile = db.selectProfile(DatabaseHelper.DUSTY_ID);
+
+        // Initialize UI elements and set them to Dusty's profile
+        textViewBio = findViewById(R.id.textViewBio);
+        textViewBio.setText(beastProfile.getBio());
+
+        textViewName = findViewById(R.id.textViewName);
+        textViewName.setText(beastProfile.getName());
+
+        textViewMedical = findViewById(R.id.textViewMedical);
+        textViewMedical.setText(beastProfile.getMedical());
+
 
         photo4 = findViewById(R.id.imageBeastFour);
     }
@@ -101,6 +120,8 @@ public class ProfileActivity extends AppCompatActivity {
                     }
 
                     db.addPhoto(DatabaseHelper.DUSTY_ID, bitmap);
+                    int photos = db.photoCount(DatabaseHelper.DUSTY_ID);
+                    Toast.makeText(getApplicationContext(), Integer.toString(photos), Toast.LENGTH_SHORT).show();
                     photo4.setImageBitmap(bitmap);
 
                 } catch (IOException e) {

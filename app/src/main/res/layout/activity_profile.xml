@@ -88,7 +88,7 @@
             android:text="@string/medical_history" />
 
         <TextView
-            android:id="@+id/textViewMedicalHistory"
+            android:id="@+id/textViewMedical"
             style="@style/TextParagraph"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
