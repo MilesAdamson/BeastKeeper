@@ -9,10 +9,14 @@ import android.view.View;
 
 public class ProfileActivity extends AppCompatActivity {
 
+    DatabaseHelper db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        db = new DatabaseHelper(getApplicationContext());
     }
 
     @Override
