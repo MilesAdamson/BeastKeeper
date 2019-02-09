@@ -21,10 +21,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String T1_bio = "bio";
     private static final String T1_history= "history";
 
+    private static final int T1_ID_INDEX = 0;
+    private static final int T1_NAME_INDEX = 1;
+    private static final int T1_BIO_INDEX = 2;
+    private static final int T1_HISTORY_INDEX = 3;
+
     private static final String T2 = "photos";
     private static final String T2_ID = "ID";
     private static final String T2_beastID = "beastID";
     private static final String T2_photo = "photo";
+
+    private static final int T2_ID_INDEX = 0;
+    private static final int T2_BEAST_ID_INDEX = 1;
+    private static final int T2_PHOTO_INDEX = 2;
 
     public static final int DUSTY_ID = 1;
 
@@ -133,10 +142,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()){
            BeastProfile beastProfile = new BeastProfile(
-                   cursor.getInt(0),
-                   cursor.getString(1),
-                   cursor.getString(2),
-                   cursor.getString(3)
+                   cursor.getInt(T1_ID_INDEX),
+                   cursor.getString(T1_NAME_INDEX),
+                   cursor.getString(T1_BIO_INDEX),
+                   cursor.getString(T1_HISTORY_INDEX)
            );
            cursor.close();
            return beastProfile;
