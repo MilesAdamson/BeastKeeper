@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">BeastKeeper</string>
+    <string name="beast_bio_default">Dusty is 4 years old. He had a gum disease and had all of his teeth
+        removed. He doesn\'t particularly seem to care. Except when he bites you, and is confused
+        as to why it does nothing.</string>
+    <string name="beast_name_default">Dusty</string>
+    <string name="profile">Profile</string>
+    <string name="medical_history">Medical History</string>
+    <string name="beast_medical_default">-Weight: 14lbs\n-Vaccinated\n-Neutered\n-All teeth removed</string>
+    <string name="beast_photo_description">Photo of the Beast</string>
 </resources>

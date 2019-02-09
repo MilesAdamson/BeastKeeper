@@ -1,18 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ProfileActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:background="@android:color/white"
+        android:orientation="vertical">
 
-</android.support.constraint.ConstraintLayout>
+        <LinearLayout
+            android:id="@+id/LayoutHeader"
+            style="@style/LayoutHeader"
+            android:orientation="horizontal">
+
+            <ImageButton
+                style="@style/ImageHeaderIcon"
+                app:srcCompat="@drawable/foot_icon" />
+
+            <TextView
+                android:id="@+id/textViewName"
+                style="@style/TextHeader"
+                android:text="@string/beast_name_default" />
+
+            <ImageButton
+                style="@style/ImageHeaderIcon"
+                app:srcCompat="@drawable/foot_icon" />
+        </LinearLayout>
+
+        <HorizontalScrollView
+            android:id="@+id/ScrollViewPhotos"
+            style="@style/ScrollViewPhotos"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/LayoutPhotos"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/imageBeastOne"
+                    style="@style/ImageInScrollView"
+                    app:srcCompat="@drawable/cat_one" />
+
+                <ImageButton
+                    android:id="@+id/imageBeastTwo"
+                    style="@style/ImageInScrollView"
+                    app:srcCompat="@drawable/cat_two" />
+
+                <ImageButton
+                    android:id="@+id/imageBeastThree"
+                    style="@style/ImageInScrollView"
+                    app:srcCompat="@drawable/cat_three" />
+
+                <ImageButton
+                    android:id="@+id/imageBeastFour"
+                    style="@style/ImageInScrollView" />
+
+                <ImageButton
+                    android:id="@+id/imageBeastFive"
+                    style="@style/ImageInScrollView" />
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <TextView
+            style="@style/TextParagraphTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/profile" />
+
+        <TextView
+            android:id="@+id/textViewBio"
+            style="@style/TextParagraph"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/beast_bio_default" />
+
+        <TextView
+            style="@style/TextParagraphTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/medical_history" />
+
+        <TextView
+            android:id="@+id/textViewMedicalHistory"
+            style="@style/TextParagraph"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/beast_medical_default" />
+
+    </LinearLayout>
+</ScrollView>
