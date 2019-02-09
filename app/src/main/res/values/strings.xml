@@ -8,4 +8,5 @@
     <string name="medical_history">Medical History</string>
     <string name="beast_medical_default">-Weight: 14lbs\n-Vaccinated\n-Neutered\n-All teeth removed</string>
     <string name="beast_photo_description">Photo of the Beast</string>
+    <string name="new_photo">Take a new photo</string>
 </resources>
