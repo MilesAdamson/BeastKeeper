@@ -6,6 +6,7 @@ import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.media.Image;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,13 +14,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.IOException;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    DatabaseHelper db;
     static final int REQUEST_IMAGE_CAPTURE = 1;
+
+    DatabaseHelper db;
     ImageView photo4;
 
 
@@ -29,6 +32,12 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         db = new DatabaseHelper(getApplicationContext());
+
+        // Check if Dusty is in the profiles table. If not, insert him
+        if(!db.beastIdExists(DatabaseHelper.DUSTY_ID)){
+            db.insertDusty(getApplicationContext());
+        }
+
         photo4 = findViewById(R.id.imageBeastFour);
     }
 
@@ -90,8 +99,10 @@ public class ProfileActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         System.err.println("An IOException was caught :" + e.getMessage());
                     }
-                    db.addPhoto(1, bitmap);
+
+                    db.addPhoto(DatabaseHelper.DUSTY_ID, bitmap);
                     photo4.setImageBitmap(bitmap);
+
                 } catch (IOException e) {
                     System.err.println("An IOException was caught :" + e.getMessage());
                 }

@@ -2,11 +2,13 @@ package com.adamson.miles.beastkeeper;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -23,6 +25,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String T2_ID = "ID";
     private static final String T2_beastID = "beastID";
     private static final String T2_photo = "photo";
+
+    public static final int DUSTY_ID = 1;
 
     public DatabaseHelper(Context context) {
         super (context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -67,5 +71,55 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert(T2, null, cv );
     }
 
+    // Returns the number of photos a beast currently has in the photos table.
+    // Returns zero if the beast has no photos or doesn't exist in the table.
+    public int photoCount(int beastID){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String IdString = Integer.toString(beastID);
+        int count = 0;
+
+        Cursor cursor = db.rawQuery("SELECT "+T2_ID+" FROM "+T2+
+                " WHERE "+T2_beastID+" = "+IdString+";", null);
+
+        if (cursor.moveToFirst()){
+            count = cursor.getCount();
+        }
+
+        cursor.close();
+        return count;
+    }
+
+    // Inserts Dusty into the profiles table
+    public void insertDusty(Context context){
+        SQLiteDatabase db = this.getReadableDatabase();
+        ContentValues cv = new ContentValues();
+
+        String bio = context.getResources().getString(R.string.beast_bio_default);
+        String history = context.getResources().getString(R.string.beast_medical_default);
+        String name = context.getResources().getString(R.string.beast_name_default);
+
+        cv.put(T1_ID, DUSTY_ID);
+        cv.put(T1_name, name);
+        cv.put(T1_bio, bio);
+        cv.put(T1_history, history);
+        db.insert(T1, null, cv );
+    }
+
+    // Returns true if a beast is already in the table via its ID
+    public boolean beastIdExists(int beastID){
+        String IdString = Integer.toString(beastID);
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM "+T1+
+                " WHERE "+T1_ID+" = "+IdString+";", null);
+
+        if(cursor.moveToFirst()){
+            cursor.close();
+            return true;
+        } else {
+            cursor.close();
+            return false;
+        }
+    }
 
 }
