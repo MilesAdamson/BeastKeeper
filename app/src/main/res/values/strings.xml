@@ -17,5 +17,10 @@
     <string name="alert_negative">no</string>
     <string name="delete_failure">You must have at least 2 photos.</string>
     <string name="failed">Failed to delete.</string>
-
+    <string name="alert_edit_bio">Edit Bio</string>
+    <string name="alert_edit_medical">Edit Medical History</string>
+    <string name="alert_edit_name">Edit Name</string>
+    <string name="length_error">Your beasts name must be 12 or less characters.</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
 </resources>

@@ -37,6 +37,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int T2_PHOTO_INDEX = 2;
 
     public static final int DUSTY_ID = 1;
+    public static final int UPDATE_BIO = 0;
+    public static final int UPDATE_NAME = 1;
+    public static final int UPDATE_HISTORY = 2;
 
     public DatabaseHelper(Context context) {
         super (context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -224,4 +227,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         public int getPhotoID(){return photoID;}
     }
 
+    // Updates a single field of a beasts profile
+    public void updateProfileField(int beastID, int field, String content){
+        SQLiteDatabase db = this.getReadableDatabase();
+        ContentValues cv = new ContentValues();
+
+        String beastIdString = Integer.toString(beastID);
+        switch (field){
+            case UPDATE_BIO:
+                cv.put(T1_bio, content);
+                db.update(T1, cv, T1_ID+"="+beastIdString, null);
+                break;
+            case UPDATE_NAME:
+                cv.put(T1_name, content);
+                db.update(T1, cv, T1_ID+"="+beastIdString, null);
+                break;
+            case UPDATE_HISTORY:
+                cv.put(T1_history, content);
+                db.update(T1, cv, T1_ID+"="+beastIdString, null);
+                break;
+        }
+
+    }
 }

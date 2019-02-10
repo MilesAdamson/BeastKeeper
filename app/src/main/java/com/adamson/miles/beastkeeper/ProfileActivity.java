@@ -14,7 +14,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +28,7 @@ public class ProfileActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int MAXIMUM_PHOTOS = 5;
     static final int MINIMUM_PHOTOS = 2;
+    static final int MAXIMUM_NAME_LENGTH = 12;
 
     DatabaseHelper db;
     DatabaseHelper.BeastProfile beastProfile;
@@ -68,12 +71,16 @@ public class ProfileActivity extends AppCompatActivity {
 
         textViewBio = findViewById(R.id.textViewBio);
         textViewBio.setText(beastProfile.getBio());
+        SetOnLongClickEditAlert(textViewBio);
 
         textViewName = findViewById(R.id.textViewName);
         textViewName.setText(beastProfile.getName());
+        SetOnLongClickEditAlert(textViewName);
 
         textViewMedical = findViewById(R.id.textViewMedical);
         textViewMedical.setText(beastProfile.getMedical());
+        SetOnLongClickEditAlert(textViewMedical);
+
     }
 
     @Override
@@ -262,4 +269,77 @@ public class ProfileActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    // Creates an OnLongClickListener for bio, medical history and name TextViews.
+    // A long click will open an AlertDialog where they can edit the text and save
+    // it to the database.
+    private void SetOnLongClickEditAlert(final TextView textView) {
+        textView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
+
+                final EditText input = new EditText(ProfileActivity.this);
+
+                switch (textView.getId()){
+                    case R.id.textViewBio:
+                        input.setText(beastProfile.getBio());
+                        builder.setTitle(getString(R.string.alert_edit_bio));
+                        break;
+                    case R.id.textViewMedical:
+                        input.setText(beastProfile.getMedical());
+                        builder.setTitle(getString(R.string.alert_edit_medical));
+                        break;
+                    case R.id.textViewName:
+                        input.setText(beastProfile.getName());
+                        builder.setTitle(getString(R.string.alert_edit_name));
+                        break;
+                }
+
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT);
+                input.setLayoutParams(lp);
+
+                builder.setPositiveButton(getString(R.string.save), new DialogInterface.OnClickListener() {
+                    // Save the changes to the database and display them in the bio text
+                    public void onClick(DialogInterface dialog, int which) {
+                        String updated = input.getText().toString();
+                        switch (textView.getId()){
+                            case R.id.textViewBio:
+                                db.updateProfileField(beastProfile.getID(),
+                                        DatabaseHelper.UPDATE_BIO, updated);
+                                break;
+                            case R.id.textViewMedical:
+                                db.updateProfileField(beastProfile.getID(),
+                                        DatabaseHelper.UPDATE_HISTORY, updated);
+                                break;
+                            case R.id.textViewName:
+                                if(updated.length() <= MAXIMUM_NAME_LENGTH) {
+                                    db.updateProfileField(beastProfile.getID(),
+                                            DatabaseHelper.UPDATE_NAME, updated);
+                                } else {
+                                    Toast.makeText(getApplicationContext(),
+                                            getString(R.string.length_error), Toast.LENGTH_SHORT).show();
+                                }
+                                break;
+                        }
+                        textView.setText(input.getText().toString());
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                AlertDialog alert = builder.create();
+                alert.setView(input);
+                alert.show();
+                return false;
+            }
+        });
+    }
 }
