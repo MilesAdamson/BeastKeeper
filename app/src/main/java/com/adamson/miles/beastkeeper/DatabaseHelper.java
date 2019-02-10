@@ -45,14 +45,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase database) {
         database.execSQL("CREATE TABLE " + T1 + " (" +
-                T1_ID + " INT PRIMARY KEY, " +
+                T1_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 T1_name + " TEXT NOT NULL, " +
                 T1_bio + " TEXT, " +
                 T1_history + " TEXT);"
         );
 
         database.execSQL("CREATE TABLE " + T2 + " (" +
-                T2_ID + " INT PRIMARY KEY, " +
+                T2_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 T2_beastID + " INT NOT NULL, " +
                 T2_photo + " BLOB NOT NULL);"
         );
@@ -176,6 +176,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             cursor.close();
             return null;
         }
+    }
+
+    public Boolean deletePhoto(int photoID){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String photoIdString = Integer.toString(photoID);
+
+        return db.delete(T2, T2_ID+"="+photoIdString, null) > 0;
     }
 
     // A class to contain a beasts profile, to return from select profile queries

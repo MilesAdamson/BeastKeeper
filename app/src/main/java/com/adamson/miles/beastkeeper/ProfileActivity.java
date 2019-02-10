@@ -1,14 +1,14 @@
 package com.adamson.miles.beastkeeper;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
-import android.media.Image;
 import android.net.Uri;
-import android.provider.ContactsContract;
 import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -25,6 +25,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int MAXIMUM_PHOTOS = 5;
+    static final int MINIMUM_PHOTOS = 2;
 
     DatabaseHelper db;
     DatabaseHelper.BeastProfile beastProfile;
@@ -58,8 +59,6 @@ public class ProfileActivity extends AppCompatActivity {
             db.addPhoto(DatabaseHelper.DUSTY_ID, BitmapFactory.decodeResource(getResources(),
                     R.drawable.cat_three));
         }
-
-
 
         // Select Dusty's Profile
         beastProfile = db.selectProfile(DatabaseHelper.DUSTY_ID);
@@ -143,9 +142,8 @@ public class ProfileActivity extends AppCompatActivity {
                     }
 
                     db.addPhoto(DatabaseHelper.DUSTY_ID, bitmap);
-                    photoAndIDs = db.selectPhotos(DatabaseHelper.DUSTY_ID);
-                    setImagesFromArraylist();
                     bitmap.recycle();
+                    restartActivity();
 
                 } catch (IOException e) {
                     System.err.println("An IOException was caught :" + e.getMessage());
@@ -190,6 +188,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         photoAndIDs = db.selectPhotos(DatabaseHelper.DUSTY_ID);
         setImagesFromArraylist();
+        imageOnLongClicks();
     }
 
     // Put the bitmaps in the photoAndIDs ArrayList into the ImageViews
@@ -197,6 +196,70 @@ public class ProfileActivity extends AppCompatActivity {
         for(int i = 0; i < photoAndIDs.size() && i < imageViews.length; i++){
             imageViews[i].setImageBitmap(photoAndIDs.get(i).getBitmap());
         }
+    }
+
+    private void imageOnLongClicks(){
+        for(int i = 0; i < imageViews.length; i++){
+            // A null ImageView is blank and doesn't need an OnLongClickListener
+            if(imageViews[i].getDrawable() != null){
+                final int index = i;
+                imageViews[i].setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
+
+                        builder.setTitle(getString(R.string.alert_delete_title));
+                        builder.setMessage(getString(R.string.alert_delete_message));
+
+                        builder.setPositiveButton(getString(R.string.alert_positive),
+                                new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int which) {
+                                // You may not go below the minimum photo count
+                                if(db.photoCount(beastProfile.getID()) - 1 < MINIMUM_PHOTOS){
+                                    Toast.makeText(getApplicationContext(),
+                                            getString(R.string.delete_failure), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    // try to delete photo based on its photoID
+                                    if (!db.deletePhoto(photoAndIDs.get(index).getPhotoID())) {
+                                        Toast.makeText(getApplicationContext(),
+                                                getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        // deletion succeeded
+                                        photoAndIDs = db.selectPhotos(beastProfile.getID());
+                                        restartActivity();
+                                    }
+                                }
+                                dialog.dismiss();
+                            }
+                        });
+
+                        builder.setNegativeButton(getString(R.string.alert_negative),
+                                new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // simply close dialog
+                                dialog.dismiss();
+                            }
+                        });
+                        AlertDialog alert = builder.create();
+                        alert.show();
+                        return false;
+                    }
+                });
+            } else {
+                // This ImageView is blank and we can hide it
+                imageViews[i].setVisibility(View.GONE);
+            }
+        }
+    }
+
+    // Used to refresh display when there are changes to the database
+    private void restartActivity(){
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
     }
 
 }

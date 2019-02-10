@@ -45,18 +45,15 @@
 
                 <ImageButton
                     android:id="@+id/imageBeastOne"
-                    style="@style/ImageInScrollView"
-                    app:srcCompat="@drawable/cat_one" />
+                    style="@style/ImageInScrollView" />
 
                 <ImageButton
                     android:id="@+id/imageBeastTwo"
-                    style="@style/ImageInScrollView"
-                    app:srcCompat="@drawable/cat_two" />
+                    style="@style/ImageInScrollView" />
 
                 <ImageButton
                     android:id="@+id/imageBeastThree"
-                    style="@style/ImageInScrollView"
-                    app:srcCompat="@drawable/cat_three" />
+                    style="@style/ImageInScrollView" />
 
                 <ImageButton
                     android:id="@+id/imageBeastFour"
