@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -98,6 +99,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return count;
     }
 
+    // Returns an array of PhotoAndID objects for every photo a beast has.
+    // If there are no photos, return null
+    public PhotoAndID[] selectPhotos(int beastID){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String IdString = Integer.toString(beastID);
+        PhotoAndID[] photoAndIDs;
+
+        Cursor cursor = db.rawQuery("SELECT * FROM "+T2+
+                " WHERE "+T2_beastID+" = "+IdString+";", null);
+
+        if (cursor.moveToFirst()){
+            photoAndIDs = new PhotoAndID[cursor.getCount()];
+            for(int i = 0; i < cursor.getCount(); i++){
+                photoAndIDs[i] = new PhotoAndID(cursor.getInt(T2_ID_INDEX), cursor.getBlob(T2_PHOTO_INDEX));
+                cursor.moveToNext();
+            }
+        } else {
+            cursor.close();
+            return null;
+        }
+
+        cursor.close();
+        return photoAndIDs;
+    }
+
     // Inserts Dusty into the profiles table
     public void insertDusty(Context context){
         SQLiteDatabase db = this.getReadableDatabase();
@@ -173,6 +199,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         public String getBio(){return bio;}
         public String getMedical(){return medical;}
         public int getID(){return beastID;}
+    }
+
+    // This class contains a photo from the db and its id. Its contructor
+    // takes the byte array from the db, and converts it to a bitmap
+    public class PhotoAndID{
+        private int photoID;
+        private byte[] blob;
+
+        public PhotoAndID(int photoID, byte[] blob) {
+            this.photoID = photoID;
+            this.blob = blob;
+        }
+
+        public Bitmap getBitmap(){
+            return BitmapFactory.decodeByteArray(blob, 0, blob.length);
+        }
+
+        public int getPhotoID(){return photoID;}
     }
 
 }

@@ -2,6 +2,7 @@ package com.adamson.miles.beastkeeper;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.media.Image;
@@ -24,8 +25,15 @@ public class ProfileActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
     DatabaseHelper db;
-    ImageView photo4;
     DatabaseHelper.BeastProfile beastProfile;
+    DatabaseHelper.PhotoAndID[] photoAndIDs;
+
+    ImageView imageBeastOne;
+    ImageView imageBeastTwo;
+    ImageView imageBeastThree;
+    ImageView imageBeastFour;
+    ImageView imageBeastFive;
+    ImageView[] imageViews;
 
     TextView textViewBio;
     TextView textViewMedical;
@@ -38,15 +46,25 @@ public class ProfileActivity extends AppCompatActivity {
 
         db = new DatabaseHelper(getApplicationContext());
 
-        // Check if Dusty is in the profiles table. If not, insert him
+        // Check if Dusty is in the profiles table. If not, insert him and his photos
         if(!db.beastIdExists(DatabaseHelper.DUSTY_ID)){
             db.insertDusty(getApplicationContext());
+            db.addPhoto(DatabaseHelper.DUSTY_ID, BitmapFactory.decodeResource(getResources(),
+                    R.drawable.cat_one));
+            db.addPhoto(DatabaseHelper.DUSTY_ID, BitmapFactory.decodeResource(getResources(),
+                    R.drawable.cat_two));
+            db.addPhoto(DatabaseHelper.DUSTY_ID, BitmapFactory.decodeResource(getResources(),
+                    R.drawable.cat_three));
         }
+
+
 
         // Select Dusty's Profile
         beastProfile = db.selectProfile(DatabaseHelper.DUSTY_ID);
 
         // Initialize UI elements and set them to Dusty's profile
+        initImageViews();
+
         textViewBio = findViewById(R.id.textViewBio);
         textViewBio.setText(beastProfile.getBio());
 
@@ -55,9 +73,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         textViewMedical = findViewById(R.id.textViewMedical);
         textViewMedical.setText(beastProfile.getMedical());
-
-
-        photo4 = findViewById(R.id.imageBeastFour);
     }
 
     @Override
@@ -122,7 +137,7 @@ public class ProfileActivity extends AppCompatActivity {
                     db.addPhoto(DatabaseHelper.DUSTY_ID, bitmap);
                     int photos = db.photoCount(DatabaseHelper.DUSTY_ID);
                     Toast.makeText(getApplicationContext(), Integer.toString(photos), Toast.LENGTH_SHORT).show();
-                    photo4.setImageBitmap(bitmap);
+                    bitmap.recycle();
 
                 } catch (IOException e) {
                     System.err.println("An IOException was caught :" + e.getMessage());
@@ -150,6 +165,25 @@ public class ProfileActivity extends AppCompatActivity {
         img.recycle();
 
         return rotatedImg;
+    }
+
+    // Initialize all ImageViews and the array that contains them. Set their images with
+    // the images stored in the database
+    private void initImageViews(){
+        imageBeastOne = findViewById(R.id.imageBeastOne);
+        imageBeastTwo = findViewById(R.id.imageBeastTwo);
+        imageBeastThree = findViewById(R.id.imageBeastThree);
+        imageBeastFour = findViewById(R.id.imageBeastFour);
+        imageBeastFive = findViewById(R.id.imageBeastFive);
+
+        imageViews = new ImageView[]{
+                imageBeastOne,imageBeastTwo,imageBeastThree, imageBeastFour, imageBeastFive
+        };
+
+        photoAndIDs = db.selectPhotos(DatabaseHelper.DUSTY_ID);
+        for(int i = 0; i < photoAndIDs.length && i < imageViews.length; i++){
+            imageViews[i].setImageBitmap(photoAndIDs[i].getBitmap());
+        }
     }
 
 }
