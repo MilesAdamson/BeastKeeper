@@ -100,24 +100,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Returns an array of PhotoAndID objects for every photo a beast has.
-    // If there are no photos, return null
-    public PhotoAndID[] selectPhotos(int beastID){
+    // If there are no photos, returns an arraylist of length zero
+    public ArrayList<PhotoAndID> selectPhotos(int beastID){
         SQLiteDatabase db = this.getReadableDatabase();
         String IdString = Integer.toString(beastID);
-        PhotoAndID[] photoAndIDs;
+        ArrayList<PhotoAndID> photoAndIDs = new ArrayList<>();
 
         Cursor cursor = db.rawQuery("SELECT * FROM "+T2+
                 " WHERE "+T2_beastID+" = "+IdString+";", null);
 
         if (cursor.moveToFirst()){
-            photoAndIDs = new PhotoAndID[cursor.getCount()];
             for(int i = 0; i < cursor.getCount(); i++){
-                photoAndIDs[i] = new PhotoAndID(cursor.getInt(T2_ID_INDEX), cursor.getBlob(T2_PHOTO_INDEX));
+                photoAndIDs.add(new PhotoAndID(cursor.getInt(T2_ID_INDEX),
+                        cursor.getBlob(T2_PHOTO_INDEX)));
                 cursor.moveToNext();
             }
-        } else {
-            cursor.close();
-            return null;
         }
 
         cursor.close();

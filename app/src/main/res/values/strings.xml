@@ -9,4 +9,6 @@
     <string name="beast_medical_default">-Weight: 14lbs\n-Vaccinated\n-Neutered\n-All teeth removed</string>
     <string name="beast_photo_description">Photo of the Beast</string>
     <string name="new_photo">Take a new photo</string>
+    <string name="photo_error">You can\'t take a new photo, because you already have the maximum.\n\n
+    Tap and hold on an image to delete it.</string>
 </resources>

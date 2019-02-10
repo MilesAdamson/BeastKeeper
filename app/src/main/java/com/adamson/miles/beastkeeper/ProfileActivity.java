@@ -19,14 +19,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class ProfileActivity extends AppCompatActivity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int MAXIMUM_PHOTOS = 5;
 
     DatabaseHelper db;
     DatabaseHelper.BeastProfile beastProfile;
-    DatabaseHelper.PhotoAndID[] photoAndIDs;
+    ArrayList<DatabaseHelper.PhotoAndID> photoAndIDs;
 
     ImageView imageBeastOne;
     ImageView imageBeastTwo;
@@ -87,10 +89,16 @@ public class ProfileActivity extends AppCompatActivity {
 
         switch (id){
             case R.id.action_photo:
-                // start the camera with intent to take picture, if the phone has a camera
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                // Check if they are allow to add another photo
+                if(db.photoCount(beastProfile.getID()) < MAXIMUM_PHOTOS){
+                    // start the camera with intent to take picture, if the phone has a camera
+                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.photo_error), Toast.LENGTH_SHORT).show();
                 }
                 break;
 
@@ -135,8 +143,8 @@ public class ProfileActivity extends AppCompatActivity {
                     }
 
                     db.addPhoto(DatabaseHelper.DUSTY_ID, bitmap);
-                    int photos = db.photoCount(DatabaseHelper.DUSTY_ID);
-                    Toast.makeText(getApplicationContext(), Integer.toString(photos), Toast.LENGTH_SHORT).show();
+                    photoAndIDs = db.selectPhotos(DatabaseHelper.DUSTY_ID);
+                    setImagesFromArraylist();
                     bitmap.recycle();
 
                 } catch (IOException e) {
@@ -181,8 +189,13 @@ public class ProfileActivity extends AppCompatActivity {
         };
 
         photoAndIDs = db.selectPhotos(DatabaseHelper.DUSTY_ID);
-        for(int i = 0; i < photoAndIDs.length && i < imageViews.length; i++){
-            imageViews[i].setImageBitmap(photoAndIDs[i].getBitmap());
+        setImagesFromArraylist();
+    }
+
+    // Put the bitmaps in the photoAndIDs ArrayList into the ImageViews
+    private void setImagesFromArraylist(){
+        for(int i = 0; i < photoAndIDs.size() && i < imageViews.length; i++){
+            imageViews[i].setImageBitmap(photoAndIDs.get(i).getBitmap());
         }
     }
 
