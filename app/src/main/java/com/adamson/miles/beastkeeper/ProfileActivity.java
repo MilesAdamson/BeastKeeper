@@ -146,6 +146,7 @@ public class ProfileActivity extends AppCompatActivity {
                         System.err.println("An IOException was caught :" + e.getMessage());
                     }
 
+                    // Insert the upright image and recycle the bitmap
                     db.addPhoto(DatabaseHelper.DUSTY_ID, bitmap);
                     bitmap.recycle();
                     restartActivity();

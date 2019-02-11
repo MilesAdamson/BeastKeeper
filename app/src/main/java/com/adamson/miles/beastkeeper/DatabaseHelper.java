@@ -77,6 +77,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // convert from bitmap to byte array
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
+        bitmap.recycle();
 
         // insert
         cv.put(T2_beastID, beastID);
@@ -181,11 +182,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    // Deletes a photo of a given ID. Returns true upon success,
+    // and returns false upon failure
     public Boolean deletePhoto(int photoID){
         SQLiteDatabase db = this.getReadableDatabase();
-
         String photoIdString = Integer.toString(photoID);
-
         return db.delete(T2, T2_ID+"="+photoIdString, null) > 0;
     }
 
