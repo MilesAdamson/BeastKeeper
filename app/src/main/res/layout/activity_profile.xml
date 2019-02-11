@@ -9,7 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
+        android:background="@color/colorBackground"
         android:orientation="vertical">
 
         <LinearLayout
@@ -19,6 +19,7 @@
 
             <ImageButton
                 style="@style/ImageHeaderIcon"
+                android:background="@color/colorLightBackground"
                 app:srcCompat="@drawable/foot_icon" />
 
             <TextView
@@ -28,6 +29,7 @@
 
             <ImageButton
                 style="@style/ImageHeaderIcon"
+                android:background="@color/colorLightBackground"
                 app:srcCompat="@drawable/foot_icon" />
         </LinearLayout>
 
@@ -35,7 +37,8 @@
             android:id="@+id/ScrollViewPhotos"
             style="@style/ScrollViewPhotos"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:scrollbars="none">
 
             <LinearLayout
                 android:id="@+id/LayoutPhotos"

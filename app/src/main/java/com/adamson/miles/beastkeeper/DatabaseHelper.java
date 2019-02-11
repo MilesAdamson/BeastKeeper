@@ -70,7 +70,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Adds a photo to the photos table, with the foreign key of the beasts profile
     // and the bitmap of the image
-    public void addPhoto(int id, Bitmap bitmap){
+    public void addPhoto(int beastID, Bitmap bitmap){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new  ContentValues();
 
@@ -79,7 +79,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
 
         // insert
-        cv.put(T2_beastID, id);
+        cv.put(T2_beastID, beastID);
         cv.put(T2_photo, stream.toByteArray());
         db.insert(T2, null, cv );
     }
@@ -103,7 +103,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Returns an array of PhotoAndID objects for every photo a beast has.
-    // If there are no photos, returns an arraylist of length zero
+    // If there are no photos, returns an ArrayList of length zero
     public ArrayList<PhotoAndID> selectPhotos(int beastID){
         SQLiteDatabase db = this.getReadableDatabase();
         String IdString = Integer.toString(beastID);
@@ -209,7 +209,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         public int getID(){return beastID;}
     }
 
-    // This class contains a photo from the db and its id. Its contructor
+    // This class contains a photo from the db and its id. Its constructor
     // takes the byte array from the db, and converts it to a bitmap
     public class PhotoAndID{
         private int photoID;
@@ -247,6 +247,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 db.update(T1, cv, T1_ID+"="+beastIdString, null);
                 break;
         }
-
     }
 }

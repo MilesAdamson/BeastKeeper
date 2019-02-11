@@ -59,8 +59,6 @@ public class ProfileActivity extends AppCompatActivity {
                     R.drawable.cat_one));
             db.addPhoto(DatabaseHelper.DUSTY_ID, BitmapFactory.decodeResource(getResources(),
                     R.drawable.cat_two));
-            db.addPhoto(DatabaseHelper.DUSTY_ID, BitmapFactory.decodeResource(getResources(),
-                    R.drawable.cat_three));
         }
 
         // Select Dusty's Profile
@@ -166,6 +164,8 @@ public class ProfileActivity extends AppCompatActivity {
 
         int width = img.getWidth();
         int height = img.getHeight();
+        // This example app uses thumbnail size images
+        // A full version would need to work with full size images too
         float scaleWidth = ((float) width * 0.2f) / width;
         float scaleHeight = ((float) height * 0.2f) / height;
 
@@ -194,17 +194,20 @@ public class ProfileActivity extends AppCompatActivity {
         };
 
         photoAndIDs = db.selectPhotos(DatabaseHelper.DUSTY_ID);
-        setImagesFromArraylist();
+        setImagesFromArrayList();
         imageOnLongClicks();
     }
 
     // Put the bitmaps in the photoAndIDs ArrayList into the ImageViews
-    private void setImagesFromArraylist(){
+    private void setImagesFromArrayList(){
         for(int i = 0; i < photoAndIDs.size() && i < imageViews.length; i++){
             imageViews[i].setImageBitmap(photoAndIDs.get(i).getBitmap());
         }
     }
 
+    // Sets the ImageView onLongClickListeners to open an alert dialog
+    // prompting the user to delete the photo or cancel.
+    // ImageViews where there was no photo are hidden with View.GONE
     private void imageOnLongClicks(){
         for(int i = 0; i < imageViews.length; i++){
             // A null ImageView is blank and doesn't need an OnLongClickListener
@@ -295,6 +298,8 @@ public class ProfileActivity extends AppCompatActivity {
                         break;
                 }
 
+                // Since this is the only view in the dialog, it can
+                // match both its parents width and height
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.MATCH_PARENT);
